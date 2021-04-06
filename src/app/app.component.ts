@@ -16,14 +16,14 @@ export class Numero {
   } ) {
     if ( !obj ) { return; }
 
-    this.linkProp( 'numero', obj.number );
-    this.linkProp( 'nombre', obj.name );
-    this.linkProp( 'array', obj.arr );
-    this.linkProp( 'objeto', obj.obj );
+    this.linkProp( this, 'numero', obj.number );
+    this.linkProp( this, 'nombre', obj.name );
+    this.linkProp( this, 'array', obj.arr );
+    this.linkProp( this, 'objeto', obj.obj );
   }
 
-  linkProp( classProp: string, objProp: any ) {
-    this[ classProp ] = this.checkProp( objProp );
+  linkProp(context: object, classProp: string, objProp: any ) {
+    context[ classProp ] = this.checkProp( objProp );
   }
 
   checkProp( val ) {
@@ -99,13 +99,67 @@ export class AppComponent {
 
   constructor( private http: HttpClient ) {
 
+    const arrDup = [
+      { id: 1, desc: 'uno' },
+      { id: 2, desc: 'dos' },
+      { id: 3, desc: 'tres' },
+      { id: 4, desc: 'cuatro' },
+      { id: 4, desc: 'cuatro' }
+    ];
+
     this.callSrv( this.endpoints.array )
     this.callSrv( this.endpoints.objeto )
 
     this.searchIn( this, Paths.cinco );
     this.searchIn( this, Paths.seis );
     this.searchIn( this, Paths.siete );
+
+    console.log( 'isEqual', this.check().object.isEqual(
+      { uno: 1, dos: 2, tres: 3 }, [ 111 ] ) );
+
+    console.log( 'maper', this.maper( arrDup ) )
+
+    console.log( 'removeDuplicateds', this.removeDuplicateds( arrDup, 'id' ) );
+
+
   }
+
+  maper( item: any[] ) {
+    const product: any = item.map( el => {
+      return [ el, el.id ]
+    } );
+    const fin = new WeakMap();
+    // fin.set( { id: 4, desc: 'cuatro' }, 4)
+    // const el = [ ...new Map( product ).values()];
+    return product
+  }
+
+
+  check() {
+    const isEqual = ( a, b, strict = true ) => {
+      const
+        aPropNames = Object.keys( a ),
+        bPropNames = Object.keys( b )
+        ;
+      if ( strict && aPropNames.length !== bPropNames.length ) {
+        return false;
+      }
+      // [ propName, aValue, bValue, aValue === aValue]
+      const
+        valuePairs = aPropNames.map( el => [ el, a[ el ], b[ el ], a[ el ] === b[ el ], ] ),
+        allAreEquals = valuePairs.every( el => el[ 3 ] === true )
+        ;
+      return allAreEquals;
+    }
+
+
+    return {
+      object: {
+        isEqual
+      }
+    }
+  }
+
 
   callSrv( obj ) {
     this.http.get( obj.url )
@@ -144,10 +198,27 @@ export class AppComponent {
     return res;
   }
 
+  /**
+   * @param arr Array a limpiar de duplicados
+   * @param propCompare Propiedad usada para comparar duplicados
+   * @example removeDuplicateds( [{id:1},{id:2},{id:2}],'id') => [{id:1},{id:2}]
+   */
   removeDuplicateds( arr: any[], propCompare: string ) {
-    const arrayUniqueByKey = [ ...new Map( arr.map( item =>
-      [ item[ propCompare ], item ] ) ).values() ];
-    return arrayUniqueByKey;
+    const
+      ids = arr.map( e => e[ propCompare ] ),
+      idsInside = [],
+      results = []
+      ;
+    ids.forEach( id => {
+      if ( !idsInside.includes( id ) ) {
+        const item = arr.find( el => el[ propCompare ] === id );
+        if ( item ) {
+          idsInside.push( id );
+          results.push( item );
+        }
+      }
+    } );
+    return results;
   }
 
 }
