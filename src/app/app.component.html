@@ -6,5 +6,5 @@
   <div [formGroup]="myForm">
     <input formControlName="uno">
   </div>
-  <app-test1 [form]="{form: myForm, path: 'dos'}"></app-test1>
+  <app-test1 [form]="{form: myForm, path: myForm.get('dos')}"></app-test1>
 </div>

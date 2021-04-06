@@ -7,14 +7,12 @@ import { FormGroup } from '@angular/forms';
   styleUrls: ['./test1.component.scss']
 })
 export class Test1Component implements OnInit {
-  formal: FormGroup;
 
   @Input() form;
 
   constructor() { }
 
   ngOnInit() {
-    this.formal = this.form;
     console.log('formInput', this.form);
   }
 
