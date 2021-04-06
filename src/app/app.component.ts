@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { map, take, tap } from 'rxjs/operators';
 
 export class Numero {
@@ -97,7 +98,27 @@ export class AppComponent {
     }
   }
 
-  constructor( private http: HttpClient ) {
+  myForm: FormGroup
+
+  user: FormGroup;
+    
+
+  constructor( private http: HttpClient, private fb: FormBuilder ) {
+
+    this.myForm = this.fb.group( {
+      uno: '',
+      dos: ''
+    } )
+
+    this.myForm
+      .valueChanges
+      .subscribe(console.log)
+
+    this.user = new FormGroup( {
+      name: new FormControl( '' ),
+      password: new FormControl( '' ),
+      passwordRepeat: new FormControl( '' )
+    } );
 
     const arrDup = [
       { id: 1, desc: 'uno' },

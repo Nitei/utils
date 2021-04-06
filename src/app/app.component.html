@@ -1,0 +1,10 @@
+
+<div>
+  <!-- <div [formGroup]="user">
+    <input formControlName="name">
+  </div> -->
+  <div [formGroup]="myForm">
+    <input formControlName="uno">
+  </div>
+  <app-test1 [form]="{form: myForm, path: 'dos'}"></app-test1>
+</div>
