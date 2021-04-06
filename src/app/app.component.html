@@ -3,8 +3,11 @@
   <!-- <div [formGroup]="user">
     <input formControlName="name">
   </div> -->
-  <div [formGroup]="myForm">
+  <!-- <div [formGroup]="myForm">
     <input formControlName="uno">
+  </div> -->
+  <div>
+    <input [formControl]="myForm?.get('uno')">
   </div>
   <app-test1 [form]="{form: myForm, path: myForm.get('dos')}"></app-test1>
 </div>

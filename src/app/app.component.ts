@@ -9,35 +9,41 @@ export class Numero {
   array: any[];
   objeto: any;
 
-  constructor( obj: {
+  constructor(obj: {
     number: number;
     name: string;
     arr: any[];
     obj: any;
-  } ) {
-    if ( !obj ) { return; }
+  }) {
+    if (!obj) { return; }
 
-    this.linkProp( this, 'numero', obj.number );
-    this.linkProp( this, 'nombre', obj.name );
-    this.linkProp( this, 'array', obj.arr );
-    this.linkProp( this, 'objeto', obj.obj );
+    this.assignProp(this, [
+      ['numero', obj.number],
+      ['nombre', obj.name],
+      ['array', obj.arr],
+      ['objeto', obj.obj]
+    ])
   }
 
-  linkProp(context: object, classProp: string, objProp: any ) {
-    context[ classProp ] = this.checkProp( objProp );
+  assignProp(ctx: object, assignList: [string, any][]) {
+    assignList.forEach((prop: [string, any]) => ctx[prop[0]] = this.checkProp(prop[1]))
   }
 
-  checkProp( val ) {
-    if ( typeof val === 'string' ) {
+  linkProp(context: object, classProp: string, objProp: any) {
+    context[classProp] = this.checkProp(objProp);
+  }
+
+  checkProp(val) {
+    if (typeof val === 'string') {
       return val.length > 0 ? val : '';
     } else
-      if ( Array.isArray( val ) ) {
+      if (Array.isArray(val)) {
         return val.length > 0 ? val : [];
       } else
-        if ( typeof val === 'object' && val !== null ) {
-          return Object.keys( val ).length > 0 ? val : null;
+        if (typeof val === 'object' && val !== null) {
+          return Object.keys(val).length > 0 ? val : null;
         } else
-          if ( typeof val === 'number' ) {
+          if (typeof val === 'number') {
             return val;
           } else {
             return val;
@@ -51,11 +57,11 @@ enum Paths {
   siete = 'example.uno.dos.tres.cuatro.cinco.seis.siete'
 }
 
-@Component( {
+@Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: [ './app.component.scss' ]
-} )
+  styleUrls: ['./app.component.scss']
+})
 export class AppComponent {
 
   example = {
@@ -75,7 +81,7 @@ export class AppComponent {
     }
   };
 
-  arr = [ { a: 'a' }, { b: 'b' }, { c: 'c' } ]
+  arr = [{ a: 'a' }, { b: 'b' }, { c: 'c' }]
 
   endpoints = {
     array: {
@@ -101,24 +107,24 @@ export class AppComponent {
   myForm: FormGroup
 
   user: FormGroup;
-    
 
-  constructor( private http: HttpClient, private fb: FormBuilder ) {
 
-    this.myForm = this.fb.group( {
-      uno: '',
-      dos: ''
-    } )
+  constructor(private http: HttpClient, private fb: FormBuilder) {
+
+    this.myForm = this.fb.group({
+      uno: 1,
+      dos: 2
+    })
 
     this.myForm
       .valueChanges
       .subscribe(console.log)
 
-    this.user = new FormGroup( {
-      name: new FormControl( '' ),
-      password: new FormControl( '' ),
-      passwordRepeat: new FormControl( '' )
-    } );
+    this.user = new FormGroup({
+      name: new FormControl(''),
+      password: new FormControl(''),
+      passwordRepeat: new FormControl('')
+    });
 
     const arrDup = [
       { id: 1, desc: 'uno' },
@@ -128,27 +134,27 @@ export class AppComponent {
       { id: 4, desc: 'cuatro' }
     ];
 
-    this.callSrv( this.endpoints.array )
-    this.callSrv( this.endpoints.objeto )
+    this.callSrv(this.endpoints.array)
+    this.callSrv(this.endpoints.objeto)
 
-    this.searchIn( this, Paths.cinco );
-    this.searchIn( this, Paths.seis );
-    this.searchIn( this, Paths.siete );
+    this.searchIn(this, Paths.cinco);
+    this.searchIn(this, Paths.seis);
+    this.searchIn(this, Paths.siete);
 
-    console.log( 'isEqual', this.check().object.isEqual(
-      { uno: 1, dos: 2, tres: 3 }, [ 111 ] ) );
+    console.log('isEqual', this.check().object.isEqual(
+      { uno: 1, dos: 2, tres: 3 }, [111]));
 
-    console.log( 'maper', this.maper( arrDup ) )
+    console.log('maper', this.maper(arrDup))
 
-    console.log( 'removeDuplicateds', this.removeDuplicateds( arrDup, 'id' ) );
+    console.log('removeDuplicateds', this.removeDuplicateds(arrDup, 'id'));
 
 
   }
 
-  maper( item: any[] ) {
-    const product: any = item.map( el => {
-      return [ el, el.id ]
-    } );
+  maper(item: any[]) {
+    const product: any = item.map(el => {
+      return [el, el.id]
+    });
     const fin = new WeakMap();
     // fin.set( { id: 4, desc: 'cuatro' }, 4)
     // const el = [ ...new Map( product ).values()];
@@ -157,18 +163,18 @@ export class AppComponent {
 
 
   check() {
-    const isEqual = ( a, b, strict = true ) => {
+    const isEqual = (a, b, strict = true) => {
       const
-        aPropNames = Object.keys( a ),
-        bPropNames = Object.keys( b )
+        aPropNames = Object.keys(a),
+        bPropNames = Object.keys(b)
         ;
-      if ( strict && aPropNames.length !== bPropNames.length ) {
+      if (strict && aPropNames.length !== bPropNames.length) {
         return false;
       }
       // [ propName, aValue, bValue, aValue === aValue]
       const
-        valuePairs = aPropNames.map( el => [ el, a[ el ], b[ el ], a[ el ] === b[ el ], ] ),
-        allAreEquals = valuePairs.every( el => el[ 3 ] === true )
+        valuePairs = aPropNames.map(el => [el, a[el], b[el], a[el] === b[el],]),
+        allAreEquals = valuePairs.every(el => el[3] === true)
         ;
       return allAreEquals;
     }
@@ -182,22 +188,22 @@ export class AppComponent {
   }
 
 
-  callSrv( obj ) {
-    this.http.get( obj.url )
+  callSrv(obj) {
+    this.http.get(obj.url)
       .pipe(
-        map( response => {
-          const data = obj.path.length > 0 ? this.searchIn( response, obj.path ) : obj;
-          return Array.isArray( this.searchIn( response, obj.path ) )
-            ? data.map( el => new obj.classMap.res( el ) )
-            : new obj.classMap.res( data );
-        } )
+        map(response => {
+          const data = obj.path.length > 0 ? this.searchIn(response, obj.path) : obj;
+          return Array.isArray(this.searchIn(response, obj.path))
+            ? data.map(el => new obj.classMap.res(el))
+            : new obj.classMap.res(data);
+        })
       )
       .pipe(
-        take( 1 )
+        take(1)
       )
-      .subscribe( el => {
-        console.log( 'subscrito', el );
-      } )
+      .subscribe(el => {
+        console.log('subscrito', el);
+      })
   }
 
   /**
@@ -206,16 +212,16 @@ export class AppComponent {
    * @returns el valor de la ruta buscada en el objeto
    * @example searchIn({uno: {dos: 2}}, 'uno.dos') => 2
    */
-  searchIn( obj, path ) {
+  searchIn(obj, path) {
     let res;
     const pathSplitted =
       typeof path === 'string'
-        ? path.split( '.' )
+        ? path.split('.')
         : path;
-    if ( pathSplitted.length === 0 || !obj ) { return; }
-    pathSplitted.forEach( ( el, idx ) => {
-      return idx === 0 ? res = obj[ el ] : res = res[ el ];
-    } );
+    if (pathSplitted.length === 0 || !obj) { return; }
+    pathSplitted.forEach((el, idx) => {
+      return idx === 0 ? res = obj[el] : res = res[el];
+    });
     return res;
   }
 
@@ -224,21 +230,21 @@ export class AppComponent {
    * @param propCompare Propiedad usada para comparar duplicados
    * @example removeDuplicateds( [{id:1},{id:2},{id:2}],'id') => [{id:1},{id:2}]
    */
-  removeDuplicateds( arr: any[], propCompare: string ) {
+  removeDuplicateds(arr: any[], propCompare: string) {
     const
-      ids = arr.map( e => e[ propCompare ] ),
+      ids = arr.map(e => e[propCompare]),
       idsInside = [],
       results = []
       ;
-    ids.forEach( id => {
-      if ( !idsInside.includes( id ) ) {
-        const item = arr.find( el => el[ propCompare ] === id );
-        if ( item ) {
-          idsInside.push( id );
-          results.push( item );
+    ids.forEach(id => {
+      if (!idsInside.includes(id)) {
+        const item = arr.find(el => el[propCompare] === id);
+        if (item) {
+          idsInside.push(id);
+          results.push(item);
         }
       }
-    } );
+    });
     return results;
   }
 
