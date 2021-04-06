@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { map, take, tap } from 'rxjs/operators';
+import { maper } from './maper.functions';
 
 export class Numero {
   numero: number;
@@ -17,7 +18,7 @@ export class Numero {
   }) {
     if (!obj) { return; }
 
-    this.assignProp(this, [
+    maper.assignProp(this, [
       ['numero', obj.number],
       ['nombre', obj.name],
       ['array', obj.arr],
@@ -25,30 +26,6 @@ export class Numero {
     ])
   }
 
-  assignProp(ctx: object, assignList: [string, any][]) {
-    assignList.forEach((prop: [string, any]) => ctx[prop[0]] = this.checkProp(prop[1]))
-  }
-
-  linkProp(context: object, classProp: string, objProp: any) {
-    context[classProp] = this.checkProp(objProp);
-  }
-
-  checkProp(val) {
-    if (typeof val === 'string') {
-      return val.length > 0 ? val : '';
-    } else
-      if (Array.isArray(val)) {
-        return val.length > 0 ? val : [];
-      } else
-        if (typeof val === 'object' && val !== null) {
-          return Object.keys(val).length > 0 ? val : null;
-        } else
-          if (typeof val === 'number') {
-            return val;
-          } else {
-            return val;
-          }
-  }
 }
 
 enum Paths {
